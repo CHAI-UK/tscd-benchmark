@@ -1,0 +1,221 @@
+data:
+  params:
+    n: [200, 1000, 2000, 5000]
+    features: [3, 4, 5, 6]
+    n_lag: [1, 2, 3]
+    seed:
+      start: 1
+      end: 10
+
+results:
+  name: paper_sim
+  plots: True
+  metrics:
+    - s_f1
+    - w_f1
+  repeats: 1
+
+algorithms:
+  - id: dummy
+    script:
+      file: dummy/dummy.py
+      env: dodiscover
+    
+  - id: cam
+    hparams:
+      alpha: [0.05]
+      constraint: [False]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: cam
+      env: dodiscover
+  
+  - id: cam-const
+    hparams:
+      alpha: [0.05]
+      constraint: [True]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: cam
+      env: dodiscover
+  
+  - id: score
+    hparams:
+      eta_g: [0.001]
+      eta_h: [0.001]
+      alpha: [0.05]
+      constraint: [False]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: score
+      env: dodiscover
+  
+  - id: score-const
+    hparams:
+      eta_g: [0.001]
+      eta_h: [0.001]
+      alpha: [0.05]
+      constraint: [True]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: score
+      env: dodiscover
+
+  - id: das
+    hparams:
+      eta_g: [0.001]
+      eta_h: [0.001]
+      alpha: [0.05]
+      constraint: [False]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: das
+      env: dodiscover
+
+  - id: das-const
+    hparams:
+      eta_g: [0.001]
+      eta_h: [0.001]
+      alpha: [0.05]
+      constraint: [True]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: das
+      env: dodiscover
+
+  - id: nogam
+    hparams:
+      ridge_alpha: [0.01]
+      ridge_gamma: [0.1]
+      eta_g: [0.001]
+      eta_h: [0.001]
+      alpha: [0.05]
+      constraint: [False]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: nogam
+      env: dodiscover
+
+  - id: nogam-const
+    hparams:
+      ridge_alpha: [0.01]
+      ridge_gamma: [0.1]
+      eta_g: [0.001]
+      eta_h: [0.001]
+      alpha: [0.05]
+      constraint: [True]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: nogam
+      env: dodiscover
+
+  - id: pcmci
+    hparams:
+      alpha: [0.05]
+      cond_test: ['par_corr', 'cmi_knn']
+    script:
+      file: tigramite/main.py
+      param: pcmci
+      env: tigramite
+
+  - id: pcmci+
+    hparams:
+      alpha: [0.05]
+      cond_test: ['par_corr', 'cmi_knn']
+    script:
+      file: tigramite/main.py
+      param: pcmci_plus
+      env: tigramite
+  
+  - id: varlingam
+    hparams:
+      alpha: [0.05]
+    script:
+      file: lingam/main.py
+      env: ../../envs/lingam.yml
+  
+  - id: dynotears
+    hparams:
+      w_thres: [0.01]
+      lambda_w: [0.05]
+      lambda_a: [0.05]
+    script:
+      file: dynotears/main.py
+      env: ../../envs/causalnex.yml
+  
+  - id: tcdf
+    hparams:
+      epochs: [5000]
+      h_layers: [1]
+      lr: [0.01]
+    script:
+      file: tcdf/TCDF-master/main.py
+      env: ../../envs/tcdf.yml
+  
+  - id: diffan
+    hparams:
+      constraint: [False]
+      const_inst: [False]
+      steps: [100]
+      n_ord: [10]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+      norm: [True]
+    script:
+      file: diffan/main.py
+      env: ../../envs/diffan.yml
+  
+  - id: diffan-const
+    hparams:
+      constraint: [True]
+      const_inst: [True]
+      steps: [100]
+      n_ord: [10]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+      norm: [True]
+    script:
+      file: diffan/main.py
+      env: ../../envs/diffan.yml
+
+  - id: DOTS-noconst
+    hparams:
+      constraint: [False]
+      const_inst: [False]
+      steps: [100]
+      n_ord: [10]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+      norm: [True]
+    script:
+      file: dots/main.py
+      env: ../../envs/diffan.yml
+  
+  - id: DOTS
+    hparams:
+      constraint: [True]
+      const_inst: [True]
+      steps: [100]
+      n_ord: [10]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+      norm: [True]
+    script:
+      file: dots/main.py
+      env: ../../envs/diffan.yml
+
+r-algorithms:
+  - id: timino
+    hparams:
+      alpha: [0.05]
+    script:
+      file: timino/main.R
+      env: ../../envs/timino.yml

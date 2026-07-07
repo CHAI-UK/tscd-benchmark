@@ -1,0 +1,31 @@
+# Pass the experiment config on the command line, e.g.:
+#   snakemake --cores 4 --sdm conda --configfile ../config/config_test.yml
+from snakemake.utils import Paramspace
+
+include: "scripts/utils.py"
+
+data_paramspace = Paramspace(yaml2grid(config['data']['params']))
+data_paramspace_noseed = Paramspace(yaml2grid(config['data']['params'], ['seed']))
+repeats_paramspace = Paramspace(yaml2grid_repeats(config['results']))
+
+input_plots = list()
+if config['results']['plots']:
+    input_plots=expand(f"results/{config['results']['name']}/plots/{{dparams}}/{{metrics}}_{{plots}}.pdf", dparams=data_paramspace_noseed.instance_patterns, metrics=config['results']['metrics'], plots=['box', 'bar'])
+
+rule all:
+    input:
+        f"results/{config['results']['name']}/summary/results.csv",
+        input_plots
+
+include: "rules/data.smk"
+include: "rules/algorithms/general.smk"
+
+rule summarise:
+    input:
+        results=expand(f"results/{config['results']['name']}/eval/{{algs}}/results.csv", algs=get_algs())
+    output:
+        f"results/{config['results']['name']}/summary/results.csv"
+    script:
+        "scripts/summarise.py"
+
+include: "rules/plots.smk"

@@ -1,0 +1,24 @@
+# Environment for DiffAN and DOTS (shared diffusion machinery + R-based CAM pruning).
+# The exact (linux-64) environment used for the paper experiments is kept in
+# workflow/envs/diffan-paper-linux64.yml.
+name: diffan
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pytorch=1.12.1
+  # - cudatoolkit=11.3  # uncomment for GPU support
+  - numpy=1.23
+  - pandas=1.4
+  - scikit-learn=1.1
+  - scipy=1.9
+  - tqdm
+  - networkx
+  - r-base=4.1
+  - r-mgcv
+  - pip
+  - pip:
+      - functorch==0.2.1
+      - cdt==0.6.0
+      - gcastle==1.0.3  # only needed for the standalone DOTS ablation scripts/notebooks

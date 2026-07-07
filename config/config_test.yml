@@ -1,0 +1,23 @@
+data:
+  params:
+    n: [500]
+    features: [3]
+    n_lag: [1]
+    prob_ar: [0.3]
+    prob_edge: [0.4]
+    seed:
+      id: [1,2,3]
+
+results:
+  name: test
+  plots: False
+  metrics:
+    - s_f1
+    - w_f1
+  repeats: 1
+
+algorithms:
+  - id: dummy
+    script:
+      file: dummy/dummy.py
+      env: dodiscover

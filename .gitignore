@@ -18,7 +18,7 @@ lib/
 lib64/
 parts/
 sdist/
-var/
+#var/
 wheels/
 share/python-wheels/
 *.egg-info/
@@ -216,3 +216,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Snakemake
+.snakemake/
+workflow/results/
+workflow/logs/
+
+# Analysis notebook outputs
+analysis/saved/

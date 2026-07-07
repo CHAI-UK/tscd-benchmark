@@ -1,0 +1,6 @@
+name: lingam
+channels:
+ - conda-forge
+dependencies:
+  - pip:
+    - lingam

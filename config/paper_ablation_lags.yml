@@ -1,0 +1,33 @@
+data:
+  params:
+    dataset: ablation_lags
+    lag: [1,2,3,4,5] # ablation parameter
+    seed:
+      id: ['n_lag~1', 'n_lag~2', 'n_lag~3']
+  options:
+    path: ../data/ablation_lags
+    scriptname: prepare_generated_data
+
+results:
+  name: paper_ablation_lags
+  plots: True
+  metrics:
+    - s_f1
+    - w_f1
+  repeats: 100
+
+algorithms:
+  - id: DOTS
+    hparams:
+      constraint: [True]
+      const_inst: [True]
+      steps: [100]
+      n_ord: [10]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+      norm: [True]
+    script:
+      file: dots/main.py
+      env: diffan

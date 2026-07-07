@@ -1,0 +1,9 @@
+name: var
+channels:
+ - conda-forge
+dependencies:
+  - python=3.10
+  - numpy
+  - pandas
+  - networkx
+  - statsmodels

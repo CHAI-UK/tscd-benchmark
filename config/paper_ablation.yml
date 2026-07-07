@@ -1,0 +1,33 @@
+data:
+  params:
+    n: [5000]
+    features: [3]
+    n_lag: [1]
+    prob_ar: [0.3]
+    prob_edge: [0.4]
+    seed:
+      id: [1]
+
+results:
+  name: paper_ablation
+  plots: True
+  metrics:
+    - s_f1
+    - w_f1
+  repeats: 500
+
+algorithms:
+  - id: DOTS
+    hparams:
+      constraint: [True]
+      const_inst: [True]
+      steps: [100]
+      n_ord: [1,2,3,4,5,6,7,8,9,10,15,20,25,30]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+      norm: [True]
+    script:
+      file: dots/main.py
+      env: diffan

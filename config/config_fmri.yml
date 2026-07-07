@@ -1,0 +1,147 @@
+data:
+  params:
+    dataset: fMRI
+    lag: [1]
+    seed:
+      id: [1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28] # removed: 4
+  options:
+    path: ../data/fMRI
+    scriptname: prepare_dataset
+
+results:
+  name: config_fmri
+  plots: True
+  metrics:
+    - s_f1
+    - w_f1
+
+algorithms:
+  - id: dummy
+    script:
+      file: dummy/dummy.py
+      env: dodiscover
+  
+  - id: cam-const
+    hparams:
+      alpha: [0.05]
+      constraint: [True]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: cam
+      env: dodiscover
+  
+  - id: score-const
+    hparams:
+      eta_g: [0.001]
+      eta_h: [0.001]
+      alpha: [0.05]
+      constraint: [True]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: score
+      env: dodiscover
+
+  - id: das-const
+    hparams:
+      eta_g: [0.001]
+      eta_h: [0.001]
+      alpha: [0.05]
+      constraint: [True]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: das
+      env: dodiscover
+
+  - id: nogam-const
+    hparams:
+      ridge_alpha: [0.01]
+      ridge_gamma: [0.1]
+      eta_g: [0.001]
+      eta_h: [0.001]
+      alpha: [0.05]
+      constraint: [True]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: nogam
+      env: dodiscover
+
+  - id: pcmci
+    hparams:
+      alpha: [0.05]
+      cond_test: ['par_corr']
+    script:
+      file: tigramite/main.py
+      param: pcmci
+      env: tigramite
+
+  - id: pcmci+
+    hparams:
+      alpha: [0.05]
+      cond_test: ['par_corr']
+    script:
+      file: tigramite/main.py
+      param: pcmci_plus
+      env: tigramite
+  
+  - id: varlingam
+    hparams:
+      alpha: [0.05]
+    script:
+      file: lingam/main.py
+      env: ../../envs/lingam.yml
+  
+  - id: dynotears
+    hparams:
+      w_thres: [0.01]
+      lambda_w: [0.05]
+      lambda_a: [0.05]
+    script:
+      file: dynotears/main.py
+      env: ../../envs/causalnex.yml
+  
+  - id: tcdf
+    hparams:
+      epochs: [5000]
+      h_layers: [1]
+      lr: [0.01]
+    script:
+      file: tcdf/TCDF-master/main.py
+      env: tcdf
+
+  - id: diffan
+    hparams:
+      constraint: [False]
+      const_inst: [False]
+      steps: [100]
+      n_ord: [10]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+      norm: [True]
+    script:
+      file: diffan/main.py
+      env: diffan
+
+  - id: DOTS
+    hparams:
+      constraint: [True]
+      const_inst: [True]
+      steps: [100]
+      n_ord: [10]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+      norm: [True]
+    script:
+      file: dots/main.py
+      env: diffan
+
+r-algorithms:
+  - id: timino
+    hparams:
+      alpha: [0.05]
+    script:
+      file: timino/main.R
+      env: timino

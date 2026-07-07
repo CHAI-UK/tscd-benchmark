@@ -1,0 +1,34 @@
+data:
+  params:
+    n: [5000]
+    features: [3]
+    n_lag: [1]
+    prob_ar: [0.3]
+    prob_edge: [0.4]
+    seed:
+      id: [1]
+
+results:
+  name: paper_ablation_softvote
+  plots: True
+  metrics:
+    - s_f1
+    - w_f1
+  repeats: 100
+
+algorithms:
+  - id: DOTS
+    hparams:
+      constraint: [True]
+      const_inst: [True]
+      steps: [100]
+      n_ord: [10]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+      norm: [True]
+      theta: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.999]
+    script:
+      file: dots/main.py
+      env: diffan

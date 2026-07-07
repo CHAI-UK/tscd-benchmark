@@ -1,0 +1,10 @@
+name: tigramite
+dependencies:
+  - python>=3.9
+  - numpy<1.24,>=1.18
+  - scipy>=1.10.0
+  - numba==0.56.4
+  - scikit-learn>=1.2
+  - matplotlib>=3.7.0
+  - seaborn>=0.12.2
+  - networkx>=3.0

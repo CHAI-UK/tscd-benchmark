@@ -1,0 +1,9 @@
+name: tcdf
+channels:
+ - conda-forge
+dependencies:
+  - numpy
+  - pandas
+  - networkx
+  - matplotlib
+  - pytorch

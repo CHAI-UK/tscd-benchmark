@@ -1,0 +1,101 @@
+data:
+  params:
+    dataset: causaltime
+    lag: [1]
+    seed:
+      id: ['medical', 'pm25', 'traffic']
+  options:
+    path: ../data/causaltime
+    scriptname: prepare_causaltime
+
+results:
+  name: paper_causaltime
+  plots: True
+  metrics:
+    - s_f1
+  repeats: 1
+
+algorithms:
+  - id: dummy
+    script:
+      file: dummy/dummy.py
+      env: dodiscover
+  
+  - id: cam-const
+    hparams:
+      alpha: [0.05]
+      constraint: [True]
+    script:
+      file: dodisc/dodiscover-main/dodisc.py
+      param: cam
+      env: dodiscover
+
+  - id: pcmci
+    hparams:
+      alpha: [0.05]
+      cond_test: ['par_corr']
+    script:
+      file: tigramite/main.py
+      param: pcmci
+      env: tigramite
+  
+  - id: varlingam
+    hparams:
+      alpha: [0.05]
+    script:
+      file: lingam/main.py
+      env: ../../envs/lingam.yml
+  
+  - id: dynotears
+    hparams:
+      w_thres: [0.01]
+      lambda_w: [0.05]
+      lambda_a: [0.05]
+    script:
+      file: dynotears/main.py
+      env: ../../envs/causalnex.yml
+  
+  - id: tcdf
+    hparams:
+      epochs: [5000]
+      h_layers: [1]
+      lr: [0.01]
+    script:
+      file: tcdf/TCDF-master/main.py
+      env: tcdf
+
+  - id: diffan-const
+    hparams:
+      constraint: [True]
+      steps: [100]
+      n_ord: [10]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+    script:
+      file: diffan/main.py
+      env: diffan
+
+  - id: DOTS
+    hparams:
+      constraint: [True]
+      const_inst: [True]
+      steps: [100]
+      n_ord: [20]
+      nn_depth: [3]
+      batch_size: [1024]
+      early_stop: [300]
+      lr: [0.001]
+      norm: [True]
+    script:
+      file: dots/main.py
+      env: diffan
+
+r-algorithms:
+  - id: timino
+    hparams:
+      alpha: [0.05]
+    script:
+      file: timino/main.R
+      env: timino

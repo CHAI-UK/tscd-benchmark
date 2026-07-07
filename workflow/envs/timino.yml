@@ -1,0 +1,7 @@
+name: timino
+channels:
+ - conda-forge
+dependencies:
+ - r-gam
+ - r-kernlab
+ - r-gptk
