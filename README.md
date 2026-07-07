@@ -5,8 +5,8 @@ A [Snakemake](https://snakemake.readthedocs.io/)-based benchmark for **causal di
 This repository accompanies the paper introducing **DOTS**, our diffusion-based causal discovery method for time series, and can be used both to **replicate the paper's results** and as a **general framework** for benchmarking your own methods.
 
 **Citation:**
-> Pedro Sanchez, Damian Machlanski, Steven McDonagh, Sotirios A. Tsaftaris
-> *Causal Ordering for Structure Learning from Time Series* TMLR 2025
+> Pedro Sanchez, Damian Machlanski, Steven McDonagh, Sotirios A. Tsaftaris.
+> *Causal Ordering for Structure Learning from Time Series*. TMLR 2025.
 > Code: https://github.com/CHAI-UK/DOTS
 
 ```
