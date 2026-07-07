@@ -8,7 +8,7 @@ if 'dataset' in config['data']['params']:
             opt=data_paramspace.instance,
             data_opt=config['data']['options']
         conda:
-            'dodiscover'
+            '../envs/benchmark.yml'
         script:
             f"../scripts/data/{config['data']['options']['scriptname']}.py"
 else:

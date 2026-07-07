@@ -19,7 +19,7 @@ algorithms:
   - id: dummy
     script:
       file: dummy/dummy.py
-      env: dodiscover
+      env: ../../envs/benchmark.yml
   
   - id: cam-const
     hparams:

@@ -69,7 +69,7 @@ conda create -n snakemake -c conda-forge -c bioconda snakemake pandas scikit-lea
 **2. Algorithm environments (created manually, referenced by name in the configs):**
 
 ```bash
-# dodiscover — ALWAYS required: also used for evaluation and data preparation
+# dodiscover — only needed when running the dodiscover-based algorithms (SCORE, CAM, DAS, NoGAM)
 conda env create -f workflow/envs/dodiscover.yml
 conda run -n dodiscover pip install -e workflow/scripts/algorithms/dodisc/dodiscover-main
 
@@ -78,7 +78,7 @@ conda env create -f workflow/envs/tigramite.yml
 conda run -n tigramite pip install ./workflow/scripts/algorithms/tigramite/tigramite-master
 ```
 
-Environments for the remaining algorithms (`DOTS/DiffAN`, `TCDF`, `TiMINo`, …) are referenced **by path** in the configs and created automatically by Snakemake on first use (`--sdm conda`).
+Environments for the remaining algorithms (`DOTS/DiffAN`, `TCDF`, `TiMINo`, …) are referenced **by path** in the configs and created automatically by Snakemake on first use (`--sdm conda`). The same applies to the lightweight `benchmark` env (`workflow/envs/benchmark.yml`), which the workflow uses for data preparation, evaluation and output processing — no manual setup needed.
 
 > For bit-for-bit replication of the paper's DiffAN/DOTS results, the exact (linux-64) environment export is kept in `workflow/envs/diffan-paper-linux64.yml`.
 

@@ -42,7 +42,7 @@ def create_alg_rules(alg):
             id=f"{alg['id']}",
             repeats=repeats_paramspace.instance
         conda:
-            'dodiscover'
+            '../../envs/benchmark.yml'
         script:
             "../../scripts/eval.py"
     
@@ -97,7 +97,7 @@ def create_r_alg_rules(alg):
         params:
             alg=alg['id']
         conda:
-            'dodiscover'
+            '../../envs/benchmark.yml'
         script:
             "../../scripts/process_r_output.py"
 
@@ -116,7 +116,7 @@ def create_r_alg_rules(alg):
             id=f"{alg['id']}",
             repeats=repeats_paramspace.instance
         conda:
-            'dodiscover'
+            '../../envs/benchmark.yml'
         script:
             "../../scripts/eval.py"
     
