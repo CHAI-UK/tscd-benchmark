@@ -224,3 +224,5 @@ workflow/logs/
 
 # Analysis notebook outputs
 analysis/saved/
+
+*.db

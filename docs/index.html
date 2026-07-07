@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TSCD Benchmark — Time Series Causal Discovery</title>
+<meta name="description" content="A Snakemake-based benchmark for causal discovery from time series, accompanying the TMLR 2025 paper 'Causal Ordering for Structure Learning from Time Series' (DOTS).">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f6f8fa;
+    --text: #1f2328;
+    --text-muted: #59636e;
+    --accent: #0b5fa5;
+    --accent-soft: #e7f0f8;
+    --border: #d1d9e0;
+    --code-bg: #f6f8fa;
+    --btn-bg: #24292f;
+    --btn-text: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --bg-soft: #161b22;
+      --text: #e6edf3;
+      --text-muted: #9198a1;
+      --accent: #58a6ff;
+      --accent-soft: #12233a;
+      --border: #30363d;
+      --code-bg: #161b22;
+      --btn-bg: #e6edf3;
+      --btn-text: #0d1117;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--bg);
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 1.25rem; }
+  header { text-align: center; padding: 3.5rem 0 2rem; }
+  .kicker {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: 0.25rem 0.9rem;
+    margin-bottom: 1rem;
+  }
+  h1 { font-size: 2rem; line-height: 1.25; margin: 0 0 0.5rem; }
+  .subtitle { font-size: 1.15rem; color: var(--text-muted); margin: 0 auto 1rem; max-width: 640px; }
+  .authors { margin: 0.75rem 0 0.25rem; font-size: 1.02rem; }
+  .affiliation { margin: 0.25rem 0; font-size: 0.95rem; color: var(--text-muted); }
+  .venue { color: var(--text-muted); font-size: 0.95rem; margin: 0 0 1.5rem; }
+  .venue em { font-style: italic; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.55rem 1.2rem;
+    border-radius: 999px;
+    font-size: 0.95rem; font-weight: 600;
+    text-decoration: none;
+    background: var(--btn-bg); color: var(--btn-text);
+    border: 1px solid transparent;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn.secondary { background: transparent; color: var(--text); border-color: var(--border); }
+  main section { padding: 1.75rem 0; }
+  main section + section { border-top: 1px solid var(--border); }
+  h2 { font-size: 1.35rem; margin: 0 0 0.75rem; }
+  p { margin: 0.6rem 0; }
+  a { color: var(--accent); }
+  .figure-box { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem 1rem; margin: 1.5rem 0 0; overflow-x: auto; }
+  .figure-box svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  .figure-box img { display: block; margin: 0 auto; max-width: 100%; height: auto; background: #ffffff; border-radius: 8px; padding: 0.5rem; }
+  .figure-caption { text-align: center; font-size: 0.88rem; color: var(--text-muted); margin-top: 0.75rem; }
+  .table-scroll { overflow-x: auto; margin: 1rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.93rem; }
+  th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); }
+  code, pre { font-family: ui-monospace, SFMono-Regular, "Cascadia Code", Consolas, monospace; }
+  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 0.1em 0.35em; font-size: 0.88em; }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem; overflow-x: auto; font-size: 0.85rem; line-height: 1.55; margin: 1rem 0;
+  }
+  pre code { background: none; border: none; padding: 0; font-size: inherit; }
+  .bibtex-wrap { position: relative; }
+  .copy-btn {
+    position: absolute; top: 0.6rem; right: 0.6rem;
+    font-size: 0.78rem; font-weight: 600;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--text);
+    cursor: pointer;
+  }
+  .copy-btn:hover { background: var(--bg-soft); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.9rem; margin-top: 1rem; }
+  .card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.1rem; }
+  .card h3 { margin: 0 0 0.4rem; font-size: 1rem; }
+  .card p { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
+  ol.projects { padding-left: 1.3rem; }
+  ol.projects li { margin: 0.5rem 0; }
+  footer { border-top: 1px solid var(--border); padding: 1.75rem 0 2.5rem; font-size: 0.88rem; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <span class="kicker">TSCD Benchmark</span>
+  <h1>Time Series Causal Discovery Benchmark</h1>
+  <p class="subtitle">A highly-reproducible and customizable Snakemake-based framework that runs every algorithm in its isolated conda environment and aggregates the results for streamlined analysis.</p>
+  <p class="authors">Pedro P. Sanchez, Damian Machlanski, Steven McDonagh, Sotirios&nbsp;A.&nbsp;Tsaftaris</p>
+  <p class="affiliation">School of Engineering, University of Edinburgh, UK</p>
+  <p class="affiliation">Causality in Healthcare AI Hub (<a href="https://www.chai.ac.uk/">CHAI</a>), UK</p>
+  <div class="buttons">
+    <a class="btn" href="https://github.com/CHAI-UK/tscd-benchmark">⚙️ Benchmark Code</a>
+    <a class="btn" href="https://openreview.net/forum?id=hWuTzqggSd">📄 DOTS Paper</a>
+    <a class="btn secondary" href="https://github.com/CHAI-UK/DOTS">DOTS Code</a>
+    <a class="btn secondary" href="#citation">Cite DOTS</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section id="overview">
+  <h2>Overview</h2>
+  <p>Evaluating causal discovery methods on time series can be tricky: every method has its own environment, input format, and output convention, and fair comparison requires sweeping hyperparameters and seeds across many datasets. The <strong>TSCD Benchmark</strong> packages all of that into a single reproducible <a href="https://snakemake.readthedocs.io/">Snakemake</a> workflow. From data generation and preparation, through per-algorithm prediction in isolated conda environments, to evaluation against ground-truth graphs and a combined results table ready for analysis.</p>
+  <p>The benchmark accompanies the paper introducing <strong>DOTS</strong>, our diffusion-based causal discovery method for time series. The benchmark replicates all of the paper's experiments, and doubles as a general framework for benchmarking your own methods: adding an algorithm is one wrapper script, one conda env spec, and one config entry.</p>
+
+  <div class="figure-box">
+    <svg width="760" height="150" viewBox="0 0 760 150" role="img" aria-label="Workflow diagram: datasets flow into algorithms, whose predicted graphs are evaluated against ground truth and aggregated into results.">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8699"/>
+        </marker>
+      </defs>
+      <g font-family="-apple-system, Segoe UI, Roboto, sans-serif" font-size="13">
+        <!-- Data -->
+        <rect x="10" y="30" width="150" height="90" rx="10" fill="#e7f0f8" stroke="#0b5fa5"/>
+        <text x="85" y="55" text-anchor="middle" font-weight="700" fill="#0b5fa5">Datasets</text>
+        <text x="85" y="76" text-anchor="middle" fill="#3d4753">synthetic DGP</text>
+        <text x="85" y="93" text-anchor="middle" fill="#3d4753">Finance · fMRI</text>
+        <text x="85" y="110" text-anchor="middle" fill="#3d4753">CausalTime</text>
+        <!-- Algorithms -->
+        <rect x="210" y="30" width="170" height="90" rx="10" fill="#e7f0f8" stroke="#0b5fa5"/>
+        <text x="295" y="55" text-anchor="middle" font-weight="700" fill="#0b5fa5">10+ algorithms</text>
+        <text x="295" y="76" text-anchor="middle" fill="#3d4753">DOTS · DiffAN · PCMCI</text>
+        <text x="295" y="93" text-anchor="middle" fill="#3d4753">VARLiNGAM · DYNOTEARS</text>
+        <text x="295" y="110" text-anchor="middle" fill="#3d4753">isolated conda envs</text>
+        <!-- Evaluation -->
+        <rect x="430" y="30" width="150" height="90" rx="10" fill="#e7f0f8" stroke="#0b5fa5"/>
+        <text x="505" y="55" text-anchor="middle" font-weight="700" fill="#0b5fa5">Evaluation</text>
+        <text x="505" y="76" text-anchor="middle" fill="#3d4753">vs. ground truth</text>
+        <text x="505" y="93" text-anchor="middle" fill="#3d4753">summary + window</text>
+        <text x="505" y="110" text-anchor="middle" fill="#3d4753">graph metrics</text>
+        <!-- Results -->
+        <rect x="630" y="30" width="120" height="90" rx="10" fill="#0b5fa5"/>
+        <text x="690" y="62" text-anchor="middle" font-weight="700" fill="#ffffff">Results</text>
+        <text x="690" y="83" text-anchor="middle" fill="#dbe9f5">one table</text>
+        <text x="690" y="100" text-anchor="middle" fill="#dbe9f5">+ plots</text>
+        <!-- Arrows -->
+        <line x1="160" y1="75" x2="205" y2="75" stroke="#7a8699" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="380" y1="75" x2="425" y2="75" stroke="#7a8699" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="580" y1="75" x2="625" y2="75" stroke="#7a8699" stroke-width="2" marker-end="url(#arrow)"/>
+      </g>
+    </svg>
+    <p class="figure-caption">One workflow run: every algorithm × hyperparameter × dataset-instance combination, evaluated and aggregated.</p>
+  </div>
+</section>
+
+<section id="whats-included">
+  <h2>What's included</h2>
+  <div class="cards">
+    <div class="card">
+      <h3>Algorithms</h3>
+      <p>DOTS, DiffAN, SCORE, CAM, DAS, NoGAM, PCMCI/PCMCI+, VARLiNGAM, DYNOTEARS, TCDF, TiMINo.</p>
+    </div>
+    <div class="card">
+      <h3>Datasets</h3>
+      <p>A configurable synthetic time-series generator, plus three real-world datasets: Finance, fMRI, and CausalTime.</p>
+    </div>
+    <div class="card">
+      <h3>Metrics</h3>
+      <p>Precision, recall, F1 and more. Computed on the summary and window graphs.</p>
+    </div>
+    <!--
+    <div class="card">
+      <h3>Reproducibility</h3>
+      <p>One config file per experiment; the <code>paper_*</code> configs and analysis notebooks replicate every figure in the paper.</p>
+    </div> -->
+  </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Source</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DOTS</strong> (ours)</td><td><a href="https://github.com/CHAI-UK/DOTS">Sanchez et al., 2025</a></td><td>Diffusion-based; multiple causal orderings + soft voting + temporal constraints</td></tr>
+        <tr><td>DiffAN</td><td><a href="https://github.com/vios-s/DiffAN">Sanchez et al., 2023</a></td><td>Base method DOTS builds on</td></tr>
+        <tr><td>SCORE, CAM, DAS, NoGAM</td><td><a href="https://github.com/py-why/dodiscover">dodiscover</a></td><td>Static methods, optionally with temporal constraints</td></tr>
+        <tr><td>PCMCI, PCMCI+</td><td><a href="https://github.com/jakobrunge/tigramite">tigramite</a></td><td>Constraint-based time-series methods</td></tr>
+        <tr><td>VARLiNGAM</td><td><a href="https://pypi.org/project/lingam/">lingam</a></td><td>Linear non-Gaussian model</td></tr>
+        <tr><td>DYNOTEARS</td><td><a href="https://pypi.org/project/causalnex/">causalnex</a></td><td>Continuous-optimisation approach</td></tr>
+        <tr><td>TCDF</td><td><a href="https://github.com/M-Nauta/TCDF">Nauta et al., 2019</a></td><td>Attention-based neural method</td></tr>
+        <tr><td>TiMINo</td><td><a href="https://people.math.ethz.ch/~jopeters/code.html">Peters et al., 2013</a></td><td>R implementation</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="example-results">
+  <h2>Example results</h2>
+  <p>Two headline results from the paper, both produced end-to-end by this workflow.</p>
+
+  <div class="figure-box">
+    <img src="results_sim.png" alt="Line plots of summary-graph F1 for all benchmarked methods as sample size, number of features, and number of lags vary; DOTS achieves the highest F1 across all settings.">
+    <p class="figure-caption">Synthetic data: summary-graph F1 (F1<sub>S</sub>) as sample size, number of features, and number of lags vary. <strong>DOTS</strong> (black) leads across the whole grid; error bars show variation across repetitions.</p>
+  </div>
+
+  <div class="figure-box">
+    <img src="results_causaltime.png" alt="Results table on the CausalTime datasets (medical, AQI, traffic) comparing temporal and non-temporal methods; DOTS achieves the best average score." style="max-width: 640px;">
+    <p class="figure-caption">Realistic <a href="https://www.causaltime.cc/">CausalTime</a> datasets (medical, air quality, traffic). Best in bold, second-best underlined. <strong>DOTS</strong> (bottom) obtains the best average score.</p>
+  </div>
+</section>
+
+<section id="quick-start">
+  <h2>Quick start</h2>
+  <p>Requires <a href="https://docs.anaconda.com/miniconda/">conda</a> (Linux recommended). Run the small smoke-test experiment:</p>
+<pre><code>sh quickstart.sh</code></pre>
+  <p>See the <a href="https://github.com/CHAI-UK/tscd-benchmark#readme">README</a> for full installation notes, replication instructions for each experiment, and how to plug in your own algorithms and datasets.</p>
+</section>
+
+<section id="citation">
+  <h2>Citation</h2>
+  <p>If you use the benchmark or DOTS in your work, please cite:</p>
+  <div class="bibtex-wrap">
+    <button class="copy-btn" onclick="copyBibtex(this)">Copy</button>
+<pre id="bibtex"><code>@article{sanchez2025causal,
+  title   = {Causal Ordering for Structure Learning from Time Series},
+  author  = {Pedro Sanchez and Damian Machlanski and Steven McDonagh and Sotirios A. Tsaftaris},
+  journal = {Transactions on Machine Learning Research},
+  issn    = {2835-8856},
+  year    = {2025},
+  url     = {https://openreview.net/forum?id=hWuTzqggSd}
+}</code></pre>
+  </div>
+</section>
+
+<section id="projects">
+  <h2>Projects using the TSCD Benchmark</h2>
+  <ol class="projects">
+    <li>Causal Ordering for Structure Learning from Time Series — <a href="https://openreview.net/forum?id=hWuTzqggSd">paper</a>, <a href="https://github.com/CHAI-UK/DOTS">code</a></li>
+    <li>Rethinking Chronological Causal Discovery with Signal Processing — <a href="https://doi.org/10.1109/IEEECONF67917.2025.11443432">paper</a></li>
+  </ol>
+  <p>Used the benchmark in your own work? <a href="https://github.com/CHAI-UK/tscd-benchmark/issues">Open an issue</a> and we'll add it here.</p>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>The benchmark's own code is released under the <a href="https://github.com/CHAI-UK/tscd-benchmark/blob/main/LICENSE">Apache 2.0 license</a>. The repository vendors third-party algorithm implementations and datasets that remain under their own licenses — see <a href="https://github.com/CHAI-UK/tscd-benchmark/blob/main/THIRD_PARTY.md">THIRD_PARTY.md</a> before reusing those components.</p>
+  </div>
+</footer>
+
+<script>
+function copyBibtex(btn) {
+  const text = document.getElementById('bibtex').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+  });
+}
+</script>
+
+</body>
+</html>
